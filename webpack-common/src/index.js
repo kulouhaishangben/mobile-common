@@ -1,5 +1,5 @@
 //import _ from 'lodash'
-import '../static/css/common.css'
+import './static/css/common.css'
 import './css/style.css'
 import logo from './images/loops_logo_256.png'
 import banner from './images/banner.png' // 即使static不在同一个文件夹里面，webpack也会自动去转换路径的
@@ -7,8 +7,8 @@ import banner from './images/banner.png' // 即使static不在同一个文件夹
 import zp from 'n-zepto' // zepto的话，可以下载这个n-zepto；导出时，可以随意给变量名，方便！
 //import jq from '../static/lib/js/jquery.js' // 也可以直接手动下载后引入，导出时，可以随意给变量名，方便！
 
-import { getQueryString } from '../static/util/util.js'
-import { iframeInsert, di } from '../static/util/inLoopsApp.js'
+import { getQueryString } from './static/util/util.js'
+import { iframeInsert, di } from './static/util/inLoopsApp.js'
 
 
 import art from './art-file/1.art' // art其实是一个函数，所以可以接收参数，然后渲染页面

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import '../static/css/common.css'
+import './static/css/common.css'
 
 
 console.log(

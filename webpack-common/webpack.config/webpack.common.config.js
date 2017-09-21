@@ -15,8 +15,10 @@ module.exports = {
         vendor: [ // 利用缓存机制，将基本不变的js包（比如JQd等通用包）放在chunk 文件中，减少客户端每次打开页面都请求这些包
             //'lodash', // 写在这里就一定会打包到公共js文件了，不管index.js中有没引入！
             'n-zepto',
-            //'jquery',
-            //'./src/static/js/jquery.js', // 这样写也可以找到该插件，然后打包到公共的js文件里面
+            //'./src/static/lib/swiper/swiper-3.4.2.jquery.min.js', // 发现写路径的话，必须以./src开头才行，其他路径会找不到
+            //'./src/static/util/util.js', // 会将整个util里面的函数都打包，不管index.js里面是否按需引入
+            './src/static/css/common.css', // css文件也可以打包到公共js中，而且有顺序之分，所以公共css要放在所有css文件的最前面进行打包
+            //'./src/static/lib/swiper/swiper-3.4.2.min.css',
         ],
     },
     plugins: [
