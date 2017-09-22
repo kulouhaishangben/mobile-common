@@ -12,3 +12,8 @@ npm start或者yarn start
 打包项目：
 npm run build
 注：打包的dist文件夹是保存在webpack.config里面了。
+
+
+注意：在webpack.dev.config.js中，在devServer对象里设置了host属性：
+（1）host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了）
+（2）但在不同电脑上，需要修改为不同的IP地址！！
