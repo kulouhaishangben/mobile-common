@@ -38,8 +38,8 @@ module.exports = {
             template: 'index.html',
             inject: true, // 设置true的话，会将js资源都放在body元素的底部
             //hash: true, // 为引入的js、css文件添加hash值，有利于清除缓存
-            //chunks: ["index", "vendor"], // 通过chunks可以指定该html要引入哪些js文件；但奇怪的是，这里设置vendor后，页面会报错
-            excludeChunks : ['another'], // 排除某些js文件
+            chunks: ["runtime", "vendor", "index"], // 通过chunks可以指定该html要引入哪些js文件；一定要记得引入runtime！！
+            //excludeChunks : ['another'], // 排除某些js文件
         }),
         new HtmlWebpackPlugin({ // 如果要生成多个html页面，则要多次调用该方法
             filename: 'test.html',
