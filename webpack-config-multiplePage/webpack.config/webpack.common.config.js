@@ -59,12 +59,7 @@ plugins.push(
 
 
 module.exports = {
-    //entry: './src/index.js',
-    //entry: entries,
-    entry: {
-        loash: 'loash',
-        nZepto: 'n-zepto'
-    },
+    entry: entries,
     plugins: plugins,
     output: {
         //filename: 'bundle.js',
