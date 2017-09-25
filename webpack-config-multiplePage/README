@@ -1,0 +1,6 @@
+使用webpack构建多页面项目；
+这些配置适合运营活动的多页面项目：每个活动都是独立的，只有一些公共插件是共用的，可以拆分出来。
+
+具体配置，要看webpack.config文件夹：
+config.js是使用glob插件获取src的子文件夹路径；
+webpack.common.config.js就是主要的配置文件；

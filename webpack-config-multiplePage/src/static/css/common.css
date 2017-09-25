@@ -1,0 +1,64 @@
+* {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    /*清除移动端特有的点击高亮效果*/
+    -webkit-tap-highlight-color: transparent;
+    margin: 0;
+    padding: 0;
+}
+html{
+    width: 100%;
+    /*min-height: 100%;*/
+    /*如果要高度也刚好一整屏，就恢复下面的*/
+    /*height: 100%;*/
+}
+body {
+    width: 100%;
+    /*height: 100%;*/
+    /*min-height: 100%;*/
+    /*字体看项目而定*/
+    font-family: "Yuanti SC", 'Avenir', Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+input, button {
+    /*清除点击边框*/
+    outline: none;
+    border: none;
+    /*border: 1px solid #ccc;*/
+}
+
+ul, ol, dl, li, dd, dt {
+    list-style: none;
+}
+
+img, fieldset {
+    border: none;
+}
+
+h1,h2,h3,h4,h5,h6{
+    font-size: inherit;
+    font-weight: normal;
+}
+
+b,em,i{
+    display:inline-block;
+    font-weight:normal;
+    font-style:normal;
+}
+
+a{
+    color: #fff;
+    text-decoration: none;
+}
+a:hover{
+    color: #fff;
+    text-decoration: none;
+}
+/*清除浮动*/
+.clear:after{
+    content: '';
+    display: block;
+    clear: both;
+    height: 0;
+    visibility: hidden;
+}

@@ -1,0 +1,20 @@
+
+<p>{{text}}</p>
+<p>用这种art模板配合webpack的好处：直接在该art文件里面获取的图片，webpack会进行打包处理的</p>
+<img src="../static/images/banner.png" alt=""/>
+<div class="top-three">
+    {{each coinDataTop3 val index}}
+    <div class="top-three-item">
+        <p class="top-three-text">
+            <b class="top-three-ranking">TOP {{val.rank}}</b>
+            <br/>
+            <span class="top-three-name">{{val.profile.user_name}}</span>
+            <br/>
+            <i class="top-three-coin">{{val.reward_amount}}</i>
+        </p>
+        <div class="top-three-avatar"
+             style="background-image: url({{val.profile.avatar}});"></div>
+    </div>
+    {{/each}}
+</div>
+

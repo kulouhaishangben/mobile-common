@@ -15,24 +15,22 @@ module.exports = {
         vendor: [ // 利用缓存机制，将基本不变的js包（比如JQd等通用包）放在chunk 文件中，减少客户端每次打开页面都请求这些包
             'lodash', // 写在这里就一定会打包到公共js文件了，不管index.js中有没引入！
             'n-zepto',
-            //'./src/static/js/jquery.js', // 这样写也可以找到该插件，然后打包到公共的js文件里面
+            //'./src/static/lib/swiper/swiper-3.4.2.jquery.min.js', // 发现写路径的话，必须以./src开头才行，其他路径会找不到
+            //'./src/static/util/util.js', // 会将整个util里面的函数都打包，不管index.js里面是否按需引入
+            './src/static/css/common.css', // css文件也可以打包到公共js中，而且有顺序之分，所以公共css要放在所有css文件的最前面进行打包
+            //'./src/static/lib/swiper/swiper-3.4.2.min.css',
         ],
     },
     //devtool: 'inline-source-map', // source-map只用于开发环境，为了更容易地追踪错误和警告
-    devtool: 'source-map', // 其实生产环境也可以生产.map文件，在出现bug时可直接调试生产版本，而且.map文件只有打开开发者调试工具后才会去下载！
-    devServer: { // 开发环境时查看代码的工具，也就不用每次都生成dist文件夹了；但还有一个问题：每次运行该插件，都会删除掉dist文件夹
-        contentBase: path.join(__dirname, "dist"), // 好像不写contentBase属性也没区别？
-        compress: true, // 所有来自 dist/ 目录的文件都做 gzip 压缩和提供为服务
-        port: 8050, // 改变服务器的端口号
-        host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了）
-    },
+    //devtool: 'source-map', // 其实生产环境也可以生产.map文件，在出现bug时可直接调试生产版本，而且.map文件只有打开开发者调试工具后才会去下载！
+    //devServer: { // 开发环境时查看代码的工具，也就不用每次都生成dist文件夹了；但还有一个问题：每次运行该插件，都会删除掉dist文件夹
+    //    contentBase: path.join(__dirname, "dist"), // 好像不写contentBase属性也没区别？
+    //    compress: true, // 所有来自 dist/ 目录的文件都做 gzip 压缩和提供为服务
+    //    port: 8050, // 改变服务器的端口号
+    //    host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了）
+    //},
     plugins: [
-        new CleanWebpackPlugin(['dist']), // 清理dist中不需要的文件，应该用于生产环境即可，如果用于开发环境，可能会删除已经生成的dist文件夹的？
-        //new CleanWebpackPlugin(['dist'], {
-        //    //root: __dirname, // 根目录地址，其实就是webpack.config文件所在目录，因此有时需要修改下
-        //    root: path.resolve(__dirname, '../dist'), // 根目录地址，通过path插件重新指定根目录地址（这样从能是绝对路径）；奇怪，最终没去清除
-        //}), // 清理dist中不需要的文件
-
+        //new CleanWebpackPlugin(['dist']), // 清理dist中不需要的文件，应该用于生产环境即可，如果用于开发环境，可能会删除已经生成的dist文件夹的？
         new HtmlWebpackPlugin({ // 设置dist中的index.html要按照那个html文件去编译
             filename: 'index.html',
             template: 'index.html',
@@ -46,9 +44,9 @@ module.exports = {
             template: 'test.html',
         }),
         //new webpack.optimize.UglifyJsPlugin(),// 压缩输出文件，UglifyJsPlugin是webpack自带的，开发时建议不要打开，不然不知道哪里报错~~
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: true // 用于压缩生产环境打包的.map文件
-        }),// 压缩输出文件，UglifyJsPlugin是webpack自带的，开发时建议不要打开，不然不知道哪里报错~~
+        //new webpack.optimize.UglifyJsPlugin({
+        //    sourceMap: true // 用于压缩生产环境打包的.map文件
+        //}),// 压缩输出文件，UglifyJsPlugin是webpack自带的，开发时建议不要打开，不然不知道哪里报错~~
         //new webpack.optimize.UglifyJsPlugin({
         //    sourceMap: options.devtool && (options.devtool.indexOf("sourcemap") >= 0 || options.devtool.indexOf("source-map") >= 0) // 这行代码会报错，奇怪
         //}),
@@ -138,7 +136,10 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 10000, // 在文件大小（单位 byte）低于指定的限制时，可以返回一个 DataURL(即base64格式，将图片文件嵌入到html文档中，就不用再去服务器请求了)(有时候这种处理反而导致项目各大)
-                            name: path.posix.join('static', 'images/[name].[hash:7].[ext]') // 将打包后的图片文件放在dist/static/images文件夹中，并且名称中只拼接hash的前7位
+                            //name: path.posix.join('static', 'images/[name].[hash:7].[ext]') // 将打包后的图片文件放在dist/static/images文件夹中，并且名称中只拼接hash的前7位
+                            name: '[path][name].[hash:7].[ext]', // 这样设置，会从src开始写路径，这样就能区分不同模块的图片了
+                            //outputPath: 'images/', // 设置这个，会添加一个顶层文件夹，本来是src，变成images/src
+                            //publicPath: 'assets/' // 如果要设置这个，需要先设置output.publicPath
                         },
                     }
 
@@ -151,7 +152,10 @@ module.exports = {
                         loader: 'url-loader',
                         options: {
                             limit: 10000,
-                            name: path.posix.join('static', 'images/[name].[hash:7].[ext]') // 将打包后的图片文件放在dist/static/images文件夹中，并且名称中只拼接hash的前7位
+                            //name: path.posix.join('static', 'images/[name].[hash:7].[ext]') // 将打包后的图片文件放在dist/static/images文件夹中，并且名称中只拼接hash的前7位
+                            name: '[path][name].[hash:7].[ext]', // 这样设置，会从src开始写路径，这样就能区分不同模块的图片了
+                            //outputPath: 'images/', // 设置这个，会添加一个顶层文件夹，本来是src，变成images/src
+                            //publicPath: 'assets/' // 如果要设置这个，需要先设置output.publicPath
                         },
                     }
 

@@ -11,9 +11,9 @@ module.exports = {
     entry: {
         index: './src/index.js',
         //print: './src/print.js',
-        //another: './src/another.js', // 后续build后能生成以./src/another.js为基准的js文件，跟index就区分开了，也就可以写多页面了。
+        another: './src/another.js', // 后续build后能生成以./src/another.js为基准的js文件，跟index就区分开了，也就可以写多页面了。
         vendor: [ // 利用缓存机制，将基本不变的js包（比如JQd等通用包）放在chunk 文件中，减少客户端每次打开页面都请求这些包
-            //'lodash', // 写在这里就一定会打包到公共js文件了，不管index.js中有没引入！
+            'lodash', // 写在这里就一定会打包到公共js文件了，不管index.js中有没引入！
             'n-zepto',
             //'./src/static/lib/swiper/swiper-3.4.2.jquery.min.js', // 发现写路径的话，必须以./src开头才行，其他路径会找不到
             //'./src/static/util/util.js', // 会将整个util里面的函数都打包，不管index.js里面是否按需引入
@@ -21,20 +21,44 @@ module.exports = {
             //'./src/static/lib/swiper/swiper-3.4.2.min.css',
         ],
     },
+    //devtool: 'inline-source-map', // source-map只用于开发环境，为了更容易地追踪错误和警告
+    devtool: 'source-map', // 其实生产环境也可以生产.map文件，在出现bug时可直接调试生产版本，而且.map文件只有打开开发者调试工具后才会去下载！
+    devServer: { // 开发环境时查看代码的工具，也就不用每次都生成dist文件夹了；
+        contentBase: path.join(__dirname, "dist"), // 好像不写contentBase属性也没区别？
+        compress: true, // 所有来自 dist/ 目录的文件都做 gzip 压缩和提供为服务
+        port: 8050, // 改变服务器的端口号
+        host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了，但在不同电脑上，需要修改为不同的IP地址）
+    },
     plugins: [
+        new CleanWebpackPlugin(['dist']), // 清理dist中不需要的文件，应该用于生产环境即可，如果用于开发环境，可能会删除已经生成的dist文件夹的？
+        //new CleanWebpackPlugin(['dist'], {
+        //    //root: __dirname, // 根目录地址，其实就是webpack.config文件所在目录，因此有时需要修改下
+        //    root: path.resolve(__dirname, '../dist'), // 根目录地址，通过path插件重新指定根目录地址（这样从能是绝对路径）；奇怪，最终没去清除
+        //}), // 清理dist中不需要的文件
+
         new HtmlWebpackPlugin({ // 设置dist中的index.html要按照那个html文件去编译
             filename: 'index.html',
             template: 'index.html',
             inject: true, // 设置true的话，会将js资源都放在body元素的底部
             //hash: true, // 为引入的js、css文件添加hash值，有利于清除缓存
-            //chunks: ["runtime", "vendor", "index"], // 通过chunks可以指定该html要引入哪些js文件；一定要记得引入runtime！！
+            chunks: ["runtime", "vendor", "index"], // 通过chunks可以指定该html要引入哪些js文件；一定要记得引入runtime！！
             //excludeChunks : ['another'], // 排除某些js文件
         }),
-        //new HtmlWebpackPlugin({ // 如果要生成多个html页面，则要多次调用该方法
-        //    filename: 'test.html',
-        //    template: 'test.html',
+        new HtmlWebpackPlugin({ // 如果要生成多个html页面，则要多次调用该方法
+            filename: 'test.html',
+            template: 'test.html',
+        }),
+        //new webpack.optimize.UglifyJsPlugin(),// 压缩输出文件，UglifyJsPlugin是webpack自带的，开发时建议不要打开，不然不知道哪里报错~~
+        new webpack.optimize.UglifyJsPlugin({
+            sourceMap: true // 用于压缩生产环境打包的.map文件
+        }),// 压缩输出文件，UglifyJsPlugin是webpack自带的，开发时建议不要打开，不然不知道哪里报错~~
+        //new webpack.optimize.UglifyJsPlugin({
+        //    sourceMap: options.devtool && (options.devtool.indexOf("sourcemap") >= 0 || options.devtool.indexOf("source-map") >= 0) // 这行代码会报错，奇怪
         //}),
 
+        //new webpack.optimize.CommonsChunkPlugin({ // 代码分离的工具
+        //    name: 'common' // 将公共js文件放在一个js中，该js文件名称就是common.js
+        //}),
         // 利用缓存机制，将基本不变的js包（比如JQd等通用包）放在chunk 文件中，减少客户端每次打开页面都请求这些包
         new webpack.HashedModuleIdsPlugin(), // 将使用模块的路径，而不是数字标识符作为基准，这样在主要的js文件中引入js文件或移动引包代码的位置都不会改变通用js包的名称了。
         new webpack.optimize.CommonsChunkPlugin({
@@ -47,7 +71,6 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin({
             name: 'runtime' // 这行是实现不变的js包放在chunk 文件中，且必须在vendor的下面
         }),
-
         //new webpack.ProvidePlugin({ // 在这里可以全局添加插件，并修改插件使用时的变量名（好像要npm下载的插件才行？）
         //    $: 'n-zepto',
         //    zepto: 'n-zepto'
@@ -62,7 +85,7 @@ module.exports = {
         //publicPath: "/",
     },
     //resolve: {
-    //    alias: {// 给文件或文件夹起别名，直接写路径会报错，所以要借助path.resolve
+    //    alias: {// 直接写路径会报错，所以要借助path.resolve
     //        //jq: "jquery", // 报错
     //        jq: path.resolve(__dirname, './node_modules/jquery/dist/jquery.js'),
     //        //static: './src/static/images', // 这样写会报错的！所以要使用path.resolve
@@ -143,6 +166,15 @@ module.exports = {
 
                 ]
             },
+            //{
+            //    test: require.resolve('zepto'),
+            //    use: [
+            //        {
+            //            loader: 'exports-loader?window.Zepto!script-loader' // 奇怪，这里报解析语法错误
+            //        }
+            //    ]
+            //
+            //},
             {
                 test: /\.art$/, //这是编译art-template这个模板引擎的，这样就可以解析格式为.art的文件了
                 use: [
