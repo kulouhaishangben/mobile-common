@@ -32,11 +32,11 @@ config.allPath.forEach(v => {
     )
 });
  //将公共包（这里是供应商包）也放进入口对象中
-//entries['vendor'] = ['lodash', 'n-zepto'];
+entries['vendor'] = ['lodash', 'n-zepto'];
 // 为了将这些供应商包分别打包，所以要分别添加到入口对象中
 // 发现引入非npm方式下载的资源，打包后有可能出现报错情况，而且公共包的位置也无法调整，因此还是换回vendor
-entries['loash'] = ['lodash']
-entries['nZepto'] = ['n-zepto']
+//entries['loash'] = ['lodash']
+//entries['nZepto'] = ['n-zepto']
 
 // 将CommonsChunkPlugin插件抽离公共代码的设置添加到plugins
 plugins.push(
