@@ -122,7 +122,7 @@ module.exports = {
             //    ]
             //},
             {
-                test: /\.(png|jpe?g|gif|svg)(\?.*)?$/, // 处理图片
+                test: /\.(png|jpe?g|gif|svg|mp4)(\?.*)?$/, // 处理图片与视频
                 use: [
                     {
                         loader: 'url-loader',
@@ -138,7 +138,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/, // 处理图片
+                test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/, // 处理文字
                 use: [
                     {
                         loader: 'url-loader',
