@@ -153,14 +153,14 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(ogg|mp4)(\?.*)?$/, // 处理视频
+                test: /\.(ogg|mp4)(\?.*)?$/, // 处理视频，视频文件位置还是放在最顶层比较好，避免每次都意外上传到服务器
                 use: [
                     {
                         loader: 'url-loader',
                         options: {
                             limit: 10000, // 在文件大小（单位 byte）低于指定的限制时，可以返回一个 DataURL(即base64格式，将图片文件嵌入到html文档中，就不用再去服务器请求了)(有时候这种处理反而导致项目各大)
-                            //name: path.posix.join('static', 'images/[name].[hash:7].[ext]') // 将打包后的图片文件放在dist/static/images文件夹中，并且名称中只拼接hash的前7位
-                            name: '[path][name].[ext]', // 这样设置，会从src开始写路径，这样就能区分不同模块的图片了
+                            name: path.posix.join('video', '[name].[ext]'), // 将打包后的图片文件放在dist/static/images文件夹中，并且名称中只拼接hash的前7位
+                            // name: '[path][name].[ext]', // 这样设置，会从src开始写路径，这样就能区分不同模块的图片了
                             //outputPath: 'images/', // 设置这个，会添加一个顶层文件夹，本来是src，变成images/src
                             publicPath: '../' // 这样设置能处理多个活动项目放不同文件夹后，图片的引入路径问题
                         },

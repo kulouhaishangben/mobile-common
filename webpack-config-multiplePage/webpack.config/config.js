@@ -5,7 +5,7 @@ const glob = require('glob');
 const srcPath = __dirname + '/../src/';//源码路径
 
 //const notRequirePath = ['utils', 'common', 'component', 'less', 'config', 'images']; // 要排除的文件夹（一般是公共文件夹）
-const notRequirePath = ['static', 'art-file'];
+const notRequirePath = ['static', 'art-file', 'video'];
 
 //取得src中的所有静态目录
 let allPath = glob.sync(srcPath + "*/");
