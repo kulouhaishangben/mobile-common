@@ -39,12 +39,38 @@ export function openAppStore() {
  * @param params [type: Object] [传入后台需要的参数，比如{ host_id : 主播id }]
  * 通过Object.assign合并成一个对象：比如{ id: 14123, ts: 时间戳, host_id: 主播id }；
  * 注：安卓5.*与IOS8.*都还不支持Object.assign的，因此要进行Polyfill；不过loops应用中是支持的，还好。
+ * 注：发现用babel编译，竟然还有一些浏览器不支持Object.assign，唉，老实用Polyfill吧；
  */
 export function di(id, params = {}) {
-    const point = Object.assign({}, {
-        id: id,
-        ts: Date.now()
-    }, params);
+    //const point = Object.assign({}, {
+    //    id: id,
+    //    ts: Date.now()
+    //}, params);
+
+    var paramsCopy = params || {}
+    // single statistical point in JSON format
+    // 由于安卓不支持Object.assign，所以先为Object对象添加该方法（即进行Polyfill）
+    if (typeof Object.assign != 'function') {
+        Object.assign = function(target) {
+            'use strict';
+            if (target == null) {
+                throw new TypeError('Cannot convert undefined or null to object');
+            }
+
+            target = Object(target);
+            for (var index = 1; index < arguments.length; index++) {
+                var source = arguments[index];
+                if (source != null) {
+                    for (var key in source) {
+                        if (Object.prototype.hasOwnProperty.call(source, key)) {
+                            target[key] = source[key];
+                        }
+                    }
+                }
+            }
+            return target;
+        };
+    }
     const url = 'util/statistical?point=' + JSON.stringify(point);
     console.log('埋点链接：'+ url);
     iframeInsert(url);
