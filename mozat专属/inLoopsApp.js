@@ -42,6 +42,7 @@ function openAppStore() {
  * @param params [type: Object] [传入后台需要的参数，比如{ host_id : 主播id }]
  * 通过Object.assign合并成一个对象：比如{ id: 14123, ts: 时间戳, host_id: 主播id }；
  * 注：安卓5.*与IOS8.*都还不支持Object.assign的，因此要进行Polyfill；不过loops应用中是支持的，还好。
+ * 注：发现用babel编译，竟然还有一些浏览器不支持Object.assign，唉，老实用Polyfill吧；
  */
 function di(id, params) {
     var paramsCopy = params || {}
