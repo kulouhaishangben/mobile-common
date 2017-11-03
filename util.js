@@ -135,3 +135,36 @@ function myToastFn2 (myToast, canToast, showTime, hideTime) {
         })
     })
 }
+
+
+/**
+ * 定时刷新功能，可以自定义要刷新整个页面，或者某个部分；
+ * @param reloadTime [type: number] [自动刷新的时间，毫秒数]
+ * @param callback [type: func] [回调函数，自定义刷新的内容]
+ * 注：必须依赖jquery或zepto，里面的animate也是依赖它们的；
+ */
+function autoReload(reloadTime, callback) {
+    $(function () {
+        var $reload
+        if ($('#reload').length != 0) {
+            // 如果本来就存在这个元素，就不用创建了
+            $reload = $('#reload')
+            //console.log('已有reload');
+
+        } else {
+            console.log('新建reload');
+            $reload = $('<div id="reload"></div>')
+            $reload.html('Reload...')
+            $reload.css({
+                position: 'fixed',
+                top: '-1000px',
+                color: 'transparent'
+            })
+            $('body').append($reload) // 父元素必须也是参数，不然总会获取不到，可能是webpack打包的原因
+        }
+
+        $reload.animate({
+            top: '-900px'
+        }, reloadTime, 'linear', callback)
+    })
+}
