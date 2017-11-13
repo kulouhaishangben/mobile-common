@@ -142,7 +142,7 @@ function myToastFn2 (myToast, canToast, showTime, hideTime) {
  * @param reloadTime [type: number] [自动刷新的时间，毫秒数]
  * @param callback [type: func] [回调函数，自定义刷新的内容]
  * 注：必须依赖jquery或zepto，里面的animate也是依赖它们的；
- * 注： $('#reload').css('top', '-1000px') // 等animate执行完毕后，要添加这一行代码，防止一些手机以为transition已经执行完毕，不继续执行
+ * 注： 每次都要$('#reload').css('top', '-1000px') // 防止一些手机以为transition已经执行完毕，不继续执行
  */
 function autoReload(reloadTime, callback) {
     $(function () {
@@ -151,6 +151,11 @@ function autoReload(reloadTime, callback) {
             // 如果本来就存在这个元素，就不用创建了
             $reload = $('#reload')
             //console.log('已有reload');
+            $reload.css({
+                position: 'fixed',
+                top: '-1000px',
+                color: 'transparent'
+            })
 
         } else {
             console.log('新建reload');
