@@ -16,13 +16,39 @@
     <meta content="telephone=no,email=no address=no" name="format-detection">
     <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
     <title>移动端公共模板</title>
-    <script>
-        var deviceWidth = document.documentElement.clientWidth;
-        if(deviceWidth > 640) deviceWidth = 640;
-        document.documentElement.style.fontSize = deviceWidth / 3.75 + 'px';
-    </script>
+    <!--<script>-->
+        <!--var deviceWidth = document.documentElement.clientWidth;-->
+        <!--if(deviceWidth > 640) deviceWidth = 640;-->
+        <!--document.documentElement.style.fontSize = deviceWidth / 3.75 + 'px';-->
+    <!--</script>-->
 </head>
 <body>
+<script>
+    //    设置rem单位
+    var htmlDom = document.documentElement
+    var clientWidth = htmlDom.clientWidth;
+    if(clientWidth > 640) clientWidth = 640;
+    htmlDom.style.fontSize = clientWidth / 3.75 + 'px';
+
+    // 创建新元素，用来判断rem单位的计算是否出错
+    var div = document.createElement('div')
+    div.style.width = '1rem'
+    div.style.height = '0'
+    document.body.appendChild(div)
+    var ideal = clientWidth / 3.75 // rem单位计算正确的数值（称为理想数值）
+    var rmd = div.clientWidth / ideal // 计算真实的数值与理想rem数值的比例（如果为1，证明是rem单位正确计算了）
+    console.log('真实的数值与理想rem数值的比例：',rmd)
+    // 如果两者比例有0.2以上的出入，那就重置rem单位
+    // 囧，发现有些三星手机中，rmd比例稍微大于0.8，看来要修改差距了，换为1.2与0.85
+    if(rmd > 1.2 || rmd < 0.85){
+        console.log('准备重置rem');
+        htmlDom.style.fontSize = (clientWidth / 3.75) / rmd + 'px';
+        document.body.removeChild(div);
+        console.log('新的rem：',htmlDom.style.fontSize);
+    }
+
+</script>
+
 <div id="app">
 
 </div>
