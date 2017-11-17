@@ -11,12 +11,6 @@
  *
  * @returns string
  */
-//export function getQueryString(name) {
-//    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-//    var r = window.location.search.substr(1).match(reg);
-//    if (r!=null) return r[2];
-//    return null;
-//}
 export function getQueryString(name) {
     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)", "i")
     // 判断window.location.search是否有值，避免url中"?"前面有"#"，导致window.location.search为空字符串
@@ -29,8 +23,8 @@ export function getQueryString(name) {
     } else {
         r = window.location.hash.split("?")[1] ? window.location.hash.split("?")[1].match(reg) : null
         //console.log('window.location.search：',window.location.search);
-        //console.log('queryString：',window.location.hash.split("?"));
-        //console.log('queryString match：',r);
+        //console.log('window.location.hash：',window.location.hash.split("?"));
+        //console.log('window.location.hash match：',r);
     }
 
     if (r != null) return r[2];
@@ -120,7 +114,7 @@ export function append(parent, text) {
 
 /**
  * myToastFn会生成一个toast，并且有淡入淡出效果（依赖zepto的fade），最后会删除这个生成的toast；
- * @param parent [type: dom元素] [必要，一般是body或其他顶层元素]
+ * @param parent [type: jQ对象] [必要，一般是body或其他顶层元素]
  * @param text [type: string] [必要，toast的文案，必须为字符串，最好不要带dom元素]
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
@@ -186,41 +180,3 @@ export function myToastFn2 (myToast, canToast, showTime = 3000, hideTime = 1000)
     })
 }
 
-
-/**
- * 定时刷新功能，可以自定义要刷新整个页面，或者某个部分；
- * @param reloadTime [type: number] [自动刷新的时间，毫秒数]
- * @param callback [type: func] [回调函数，自定义刷新的内容]
- * 注：必须依赖jquery或zepto，里面的animate也是依赖它们的；
- * 注： 每次都要$('#reload').css('top', '-1000px') // 防止一些手机以为transition已经执行完毕，不继续执行
- */
-export function autoReload(reloadTime, callback) {
-    $(function () {
-        var $reload
-        if ($('#reload').length != 0) {
-            // 如果本来就存在这个元素，就不用创建了
-            $reload = $('#reload')
-            //console.log('已有reload');
-            $reload.css({
-                position: 'fixed',
-                top: '-1000px',
-                color: 'transparent'
-            })
-
-        } else {
-            console.log('新建reload');
-            $reload = $('<div id="reload"></div>')
-            $reload.html('Reload...')
-            $reload.css({
-                position: 'fixed',
-                top: '-1000px',
-                color: 'transparent'
-            })
-            $('body').append($reload) // 父元素必须也是参数，不然总会获取不到，可能是webpack打包的原因
-        }
-
-        $reload.animate({
-            top: '-900px'
-        }, reloadTime, 'linear', callback)
-    })
-}

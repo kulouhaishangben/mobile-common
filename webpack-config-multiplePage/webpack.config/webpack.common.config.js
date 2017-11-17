@@ -9,8 +9,9 @@ let plugins = [] // 插件数组
 // 将不同活动文件夹下的index.js添加到入口对象中
 config.allPath.forEach(v => {
     let childPath = v.replace(/.*\/src\/(.*)\//, '$1');
-    let childPathAnother = childPath + 'Another'
-    entries[childPath] = [v + 'index.js'];
+    //let childPathAnother = childPath + 'Another'
+    //entries[childPath] = [v + 'index.js']; // 这种一旦新建一个模块(一般是新建html)，就会导致vendor改变
+    entries[childPath] = [v + 'app.js']; // 换成有路由的，可使vendor基本不受影响
     //entries[childPathAnother] = [v + 'another.js'];
     //let childPathCommon = childPath + 'common'
     // 使用HtmlWebpackPlugin生成对应的html文件
@@ -24,8 +25,8 @@ config.allPath.forEach(v => {
             //    removeComments:true,    //移除HTML中的注释
             //    collapseWhitespace:true    //删除空白符与换行符
             //},
-            // chunks: ["runtime", "vendor", childPath], // 需要引入的chunk，不配置就会引入所有页面的资源
-            chunks: ["vendor", childPath], // 需要引入的chunk，不配置就会引入所有页面的资源
+             chunks: ["runtime", "vendor", childPath], // 需要引入的chunk，不配置就会引入所有页面的资源
+            //chunks: ["vendor", childPath], // 需要引入的chunk，不配置就会引入所有页面的资源
             // chunks: ['nZepto', 'loash' ,childPath], // 需要引入的chunk，不配置就会引入所有页面的资源
 
         })
@@ -41,22 +42,25 @@ entries['vendor'] = ['lodash', 'n-zepto'];
 
 // 将CommonsChunkPlugin插件抽离公共代码的设置添加到plugins
 plugins.push(
-   //new webpack.HashedModuleIdsPlugin(), // 将使用模块的路径，而不是数字标识符作为基准，这样在主要的js文件中引入js文件或移动引包代码的位置都不会改变通用js包的名称了。
-   new webpack.optimize.CommonsChunkPlugin({
-       name: 'vendor',
-       filename: 'js/common/vendor.js', // 设置公共包输出后的名称，不要hash，让公共包名称一直不变，这样也同样能利用缓存机制
-   })
-   //new webpack.optimize.CommonsChunkPlugin({
-   //    name: 'runtime' // 这行是实现不变的js包放在chunk 文件中，且必须在vendor的下面
-   //})
-//)
-// 将公共包分别打包到独立的js文件中吧，更适合多页面且独立的活动项目
+    new webpack.HashedModuleIdsPlugin(), // 将使用模块的路径，而不是数字标识符作为基准，这样在主要的js文件中引入js文件或移动引包代码的位置都不会改变通用js包的名称了。
+    new webpack.optimize.CommonsChunkPlugin({
+        name: 'vendor',
+        //filename: 'js/common/vendor.[chunkhash:7].js',
+        minChunks: Infinity,
+        // 随着 entry chunk 越来越多，设置minChunks为Infinity，保证没其它的模块会打包进 vendor chunk
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+        name: 'runtime' // 这行是实现不变的js包放在chunk 文件中，且必须在vendor的下面
+    })
+)
+
+// 可以将公共包分别打包到独立的js文件中吧，但一旦新建一个html文件，这些公共包的代码还是会改变，导致改变hash（如果名称定死，也不行，直接无法运行）
 // plugins.push(
 //     new webpack.optimize.CommonsChunkPlugin({
 //         //name: ["chunk",'loash','nZepto'],//对应于上面的entry的key，chunk能将主要js中相同的代码打包到一个公共包
 //         names: ['loash','nZepto'],//对应于上面的entry的key，这样做可以将公共js包分别独立的打包出来！
 //         //minChunks: 2
-//         filename: 'js/common/[name].js',// 设置公共包输出后的名称，不要hash，让公共包名称一直不变，这样也同样能利用缓存机制
+//         filename: 'js/common/[name].[chunkhash:7].js',// 设置公共包输出后的名称，不要hash，让公共包名称一直不变，这样也同样能利用缓存机制
 //     })
 // )
 

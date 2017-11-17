@@ -11,11 +11,67 @@
  *
  * @returns string
  */
-function getQueryString(name) {
-    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-    var r = window.location.search.substr(1).match(reg);
-    if (r!=null) return r[2];
+//export function getQueryString(name) {
+//    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+//    var r = window.location.search.substr(1).match(reg);
+//    if (r!=null) return r[2];
+//    return null;
+//}
+export function getQueryString(name) {
+    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)", "i")
+    // 判断window.location.search是否有值，避免url中"?"前面有"#"，导致window.location.search为空字符串
+    //var r = window.location.search ? window.location.search.substr(1).match(reg) : window.location.hash.split("?")[1].match(reg)
+    var r
+    if (window.location.search) {
+        r = window.location.search.substr(1).match(reg)
+        //console.log('window.location.search：',window.location.search);
+        //console.log('window.location.search match：',r);
+    } else {
+        r = window.location.hash.split("?")[1] ? window.location.hash.split("?")[1].match(reg) : null
+        //console.log('window.location.search：',window.location.search);
+        //console.log('queryString：',window.location.hash.split("?"));
+        //console.log('queryString match：',r);
+    }
+
+    if (r != null) return r[2];
     return null;
+}
+
+/**
+ * get URL Params
+ *
+ * USAGE:
+ * let paramName = getUrlParams('paramName');
+ * let { param1, param2 } = getUrlParams('param1', 'params2');
+ *
+ * @returns {Object, Array}
+ * 注：该方法比getQueryString更强大，可一次获取多个query；而且是使用href获取到整个url，所以更安全。
+ * arguments在安卓4.4中还不支持，因此可能有兼容问题
+ */
+export function getUrlParams() {
+    function getByName(name) {
+        //const reg = new RegExp(`(^|&|\\?)${name}=([^&]*)(&|$)`, 'i');
+        const reg = new RegExp("(^|&|\\?)" + name + "=([^&]*)(&|$)", "i");
+        const param = window.location.href.substring(1).match(reg);
+        if (param !== null) {
+            return param[2];
+        }
+        return undefined;
+    }
+
+    if (arguments.length === 1) {
+        return getByName(arguments[0]) || {};
+    }
+    let result = {};
+    //[...arguments].forEach((name) => {
+    //    result[name] = getByName(name);
+    //});
+    // 将上面的修改为ES5语法的
+    var arr = [];
+    arr.forEach.call(arguments, function (name) {
+        result[name] = getByName(name);
+    });
+    return result;
 }
 
 

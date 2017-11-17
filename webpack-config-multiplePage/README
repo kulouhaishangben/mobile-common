@@ -4,3 +4,15 @@
 具体配置，要看webpack.config文件夹：
 config.js是使用glob插件获取src的子文件夹路径；
 webpack.common.config.js就是主要的配置文件；
+
+
+注意：
+1、webpack.common.config.js中，如果config.allPath遍历时让entries[childPath] = [v + 'index.js']，那就比较适合多个html文件的情况；
+=>这是多页面的结构，基本就是每个活动有一个单独的html文件，但因此会导致每增加一个活动页面，就让vendor文件改变；
+=>详见src下的test2的目录结构；
+
+
+2、如果让entries[childPath] = [v + 'app.js']，那就使用到路由，类似vue了；
+=>每增加一个新模块，然后配置路由，并不会影响vendor；
+=>但这其实是单页面应用了，只有一个html文件，所有js代码会打包进同一个js中；
+=>详见src下的test的目录结构；

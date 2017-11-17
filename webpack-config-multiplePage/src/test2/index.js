@@ -1,8 +1,8 @@
 import $ from 'n-zepto'
 //import '../static/css/common.css'
 //import _ from 'lodash'
-import './style.css'
-import art from '../art-file/1.art'
+import './css/style.css'
+import art from './art-file/1.art'
 
 console.log(11);
 var html = art({
