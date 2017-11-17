@@ -10,8 +10,8 @@ let plugins = [] // 插件数组
 config.allPath.forEach(v => {
     let childPath = v.replace(/.*\/src\/(.*)\//, '$1');
     //let childPathAnother = childPath + 'Another'
-    //entries[childPath] = [v + 'index.js']; // 这种一旦新建一个模块(一般是新建html)，就会导致vendor改变
-    entries[childPath] = [v + 'app.js']; // 换成有路由的，可使vendor基本不受影响
+    entries[childPath] = [v + 'index.js']; // 这种一旦新建一个模块(一般是新建html)，就会导致vendor改变
+    //entries[childPath] = [v + 'app.js']; // 换成有路由的，可使vendor基本不受影响
     //entries[childPathAnother] = [v + 'another.js'];
     //let childPathCommon = childPath + 'common'
     // 使用HtmlWebpackPlugin生成对应的html文件
@@ -137,6 +137,7 @@ module.exports = {
                             name: '[path][name].[hash:7].[ext]', // 这样设置，会从src开始写路径，这样就能区分不同模块的图片了
                             //outputPath: 'images/', // 设置这个，会添加一个顶层文件夹，本来是src，变成images/src
                             publicPath: '../' // 这样设置能处理多个活动项目放不同文件夹后，图片的引入路径问题
+                            // 注意：如果变成路由控制的单页面形式，可能需要去掉publicPath设置，否则图片路径会出错。
                         },
                     }
 
