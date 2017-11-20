@@ -1,0 +1,7 @@
+这是一个移动端的公共模板与样式，很简易的。
+
+webpack-config-singlePage其实就是webpack-common的配置，但注释更完整一些。
+
+注意：在webpack.dev.config.js中，在devServer对象里设置了host属性：
+（1）host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了）
+（2）但在不同电脑上，需要修改为不同的IP地址！！
