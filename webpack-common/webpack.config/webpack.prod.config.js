@@ -13,11 +13,11 @@ const common = require('./webpack.common.config.js');
 module.exports = merge(common, {
     devtool: 'source-map', // 其实生产环境也可以生产.map文件，在出现bug时可直接调试生产版本，而且.map文件只有打开开发者调试工具后才会去下载！
     plugins: [
-        new CleanWebpackPlugin(['dist']),
-        //new CleanWebpackPlugin(['dist'], {
-        //    //root: __dirname, // 根目录地址，其实就是webpack.config文件所在目录，因此有时需要修改下
-        //    root: path.resolve(__dirname, '../dist'), // 根目录地址，通过path插件重新指定根目录地址（这样从能是绝对路径）；奇怪，最终没去清除
-        //}), // 清理dist中不需要的文件
+        //new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin(['dist'], {
+            //root: __dirname, // 根目录地址，其实就是webpack.config文件所在目录，因此有时需要修改下
+            root: path.resolve(__dirname, '../'), // 根目录地址，通过path插件重新指定根目录地址（这样只能是绝对路径）
+        }), // 清理dist中不需要的文件
 
         //new webpack.optimize.UglifyJsPlugin(),// 压缩输出文件，UglifyJsPlugin是webpack自带的，开发时建议不要打开，不然不知道哪里报错~~
         new webpack.optimize.UglifyJsPlugin({

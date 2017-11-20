@@ -73,7 +73,8 @@ module.exports = {
         //filename: '[name].[chunkhash].js', // [name]就是指代entry对象里面的key；[chunkhash]可以写一个hash，而且只有在js文件被修改时，才会改变hash，客户端才会重新请求，而不是使用缓存
         //filename: path.posix.join('static', 'js/[name].[chunkhash].js'), // 这样写，可以将js文件都放在dist/static/js文件夹里面
         filename:  'js/[name].[chunkhash:7].js', // 这样写，也可以将js文件都放在dist/js文件夹里面
-        path: path.resolve(__dirname, 'dist'),
+        //path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, '../dist'), // 打包到项目根目录的dist中
         //publicPath: "/",
     },
     //resolve: {
@@ -137,7 +138,7 @@ module.exports = {
                             name: '[path][name].[hash:7].[ext]', // 这样设置，会从src开始写路径，这样就能区分不同模块的图片了
                             //outputPath: 'images/', // 设置这个，会添加一个顶层文件夹，本来是src，变成images/src
                             publicPath: '../' // 这样设置能处理多个活动项目放不同文件夹后，图片的引入路径问题
-                            // 注意：如果变成路由控制的单页面形式，可能需要去掉publicPath设置，否则图片路径会出错。
+                            // 注意：如果变成只有一个html的单页面，需要去掉publicPath设置，否则图片路径会出错。
                         },
                     }
 
