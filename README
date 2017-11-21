@@ -1,13 +1,19 @@
 这是一个移动端的公共模板与样式，很简易的。
 
-在webpack-common文件夹中，有一个用webpack构建的项目，一般需要让项目自动化一些的话，就使用这个webpack-common里面的代码去构建吧。
+（1）在webpack-common文件夹中，有一个用webpack构建的项目，一般需要让项目自动化一些的话，就使用这个webpack-common里面的代码去构建吧。
 
-webpack-common是适合单页面程序的；
+webpack-common只适合只有一个html文件的小项目；
 
-而webpack-config-multiplePage是适合多页面程序的（运营活动那种多个活动都是独立的情况）；
+（2）webpack-config-singlePage其实就是webpack-common的配置，但注释更完整一些。
+
+（3）webpack-config-multiplePage是适合多页面程序的（运营活动那种多个活动都是独立的情况）；
 =>但该项目也可以稍微修改webpack配置，变成只有一个html的单页面应用，详见该项目下的README文件。
 
-webpack-config-singlePage其实就是webpack-common的配置，但注释更完整一些。
+（4）webpack-config-router其实是由webpack-config-multiplePage改造的，变成完全的单页面应用；
+=>有将css代码分离打包成独立文件；
+=>明确配置为单页面应用，删减掉webpack-config-multiplePage中多余的配置。
+
+
 
 注意：在webpack.dev.config.js中，在devServer对象里设置了host属性：
 （1）host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了）

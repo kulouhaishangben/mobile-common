@@ -62,9 +62,9 @@
     if(rmd > 1.2 || rmd < 0.85){
         console.log('准备重置rem');
         htmlDom.style.fontSize = (clientWidth / 3.75) / rmd + 'px';
-        document.body.removeChild(div);
         console.log('新的rem：',htmlDom.style.fontSize);
     }
+    document.body.removeChild(div);
 
 </script>
 

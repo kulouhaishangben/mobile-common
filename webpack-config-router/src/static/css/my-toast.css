@@ -1,0 +1,25 @@
+.my-toast {
+    /*这个toast尽量不要阻碍其他部分的事件，所以只能强制宽高啦*/
+    width: 1rem;
+    /*width: 0;*/
+    height: 0.5rem;
+    padding: 0.05rem 0.1rem;
+    color: #000000;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 1001;
+    display: none;
+}
+.my-toast .my-toast-text {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    word-wrap: break-word;
+}
