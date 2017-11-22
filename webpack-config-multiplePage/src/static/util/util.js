@@ -11,7 +11,13 @@
  *
  * @returns string
  */
-export function getQueryString(name) {
+//export function getQueryString(name) {
+//    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+//    var r = window.location.search.substr(1).match(reg);
+//    if (r!=null) return r[2];
+//    return null;
+//}
+export const getQueryString = function (name) {
     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)", "i")
     // 判断window.location.search是否有值，避免url中"?"前面有"#"，导致window.location.search为空字符串
     //var r = window.location.search ? window.location.search.substr(1).match(reg) : window.location.hash.split("?")[1].match(reg)
@@ -23,8 +29,8 @@ export function getQueryString(name) {
     } else {
         r = window.location.hash.split("?")[1] ? window.location.hash.split("?")[1].match(reg) : null
         //console.log('window.location.search：',window.location.search);
-        //console.log('window.location.hash：',window.location.hash.split("?"));
-        //console.log('window.location.hash match：',r);
+        //console.log('queryString：',window.location.hash.split("?"));
+        //console.log('queryString match：',r);
     }
 
     if (r != null) return r[2];
@@ -41,7 +47,7 @@ export function getQueryString(name) {
  * @returns {Object, Array}
  * 注：该方法比getQueryString更强大，可一次获取多个query；而且是使用href获取到整个url，所以更安全。
  */
-export function getUrlParams() {
+export const getUrlParams = function () {
     function getByName(name) {
         const reg = new RegExp(`(^|&|\\?)${name}=([^&]*)(&|$)`, 'i');
         const param = window.location.href.substring(1).match(reg);
@@ -68,7 +74,7 @@ export function getUrlParams() {
  *  但后续一般是使用另一个接口去跳转手机里的APP Store：iframeInsert('util/openAppStore?iosId=1085411495&androidId=mozat.rings.loops')
  * @returns {String}
  */
-export function getMobileOperatingSystem() {
+export const getMobileOperatingSystem = function () {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
     // Windows Phone must come first because its UA also contains "Android"
@@ -95,7 +101,7 @@ export function getMobileOperatingSystem() {
  * @param parent [父元素]
  * @param text  [dom元素或string]
  */
-export function append(parent, text) {
+export const append = function (parent, text) {
     if (typeof text === 'string') {
         var temp = document.createElement('div');
         temp.innerHTML = text;
@@ -114,13 +120,13 @@ export function append(parent, text) {
 
 /**
  * myToastFn会生成一个toast，并且有淡入淡出效果（依赖zepto的fade），最后会删除这个生成的toast；
- * @param parent [type: jQ对象] [必要，一般是body或其他顶层元素]
+ * @param parent [type: dom元素] [必要，一般是body或其他顶层元素]
  * @param text [type: string] [必要，toast的文案，必须为字符串，最好不要带dom元素]
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-export function myToastFn (parent, text, showTime = 3000, hideTime = 1000) {
+export const myToastFn = function (parent, text, showTime = 3000, hideTime = 1000) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
@@ -162,7 +168,7 @@ export function myToastFn (parent, text, showTime = 3000, hideTime = 1000) {
  * 注：为了起到限制作用，canToast必须为对象，且格式为canToast = { value: true }
  * 注：该方法就只操作一个toast，因此需要一个标记变量来限制。
  */
-export function myToastFn2 (myToast, canToast, showTime = 3000, hideTime = 1000) {
+export const myToastFn2 = function (myToast, canToast, showTime = 3000, hideTime = 1000) {
     //if (!canToast) { // 这种在引入该方法时会报错，因为一开始还无法找到canToast这个变量
     if (!canToast.value) {
         console.log('不可点击');
@@ -180,3 +186,52 @@ export function myToastFn2 (myToast, canToast, showTime = 3000, hideTime = 1000)
     })
 }
 
+
+/**
+ * 定时刷新功能，可以自定义要刷新整个页面，或者某个部分；
+ * @param reloadTime [type: number] [自动刷新的时间，毫秒数]
+ * @param callback [type: func] [回调函数，自定义刷新的内容]
+ * 注：必须依赖jquery或zepto，里面的animate也是依赖它们的；
+ * 注： 每次都要$('#reload').css('top', '-1000px') // 防止一些手机以为transition已经执行完毕，不继续执行
+ */
+export const autoReload = function (reloadTime, callback) {
+    $(function () {
+        var $reload
+        if ($('#reload').length != 0) {
+            // 如果本来就存在这个元素，就不用创建了
+            $reload = $('#reload')
+            //console.log('已有reload');
+            $reload.css({
+                position: 'fixed',
+                top: '-1000px',
+                color: 'transparent'
+            })
+
+        } else {
+            console.log('新建reload');
+            $reload = $('<div id="reload"></div>')
+            $reload.html('Reload...')
+            $reload.css({
+                position: 'fixed',
+                top: '-1000px',
+                color: 'transparent'
+            })
+            $('body').append($reload) // 父元素必须也是参数，不然总会获取不到，可能是webpack打包的原因
+        }
+
+        $reload.animate({
+            top: '-900px'
+        }, reloadTime, 'linear', callback)
+    })
+}
+
+// 放在对象中export，可以直接import Util from './path/util.js'
+export default {
+    getQueryString,
+    getUrlParams,
+    getMobileOperatingSystem,
+    append,
+    myToastFn,
+    myToastFn2,
+    autoReload,
+}

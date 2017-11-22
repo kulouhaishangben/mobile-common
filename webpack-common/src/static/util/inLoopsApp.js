@@ -11,7 +11,7 @@
  * 创建iframe，基本所有API的调用都是将url传递给该函数。
  */
 //export function iframeInsert(url: String) {
-export function iframeInsert(url) {
+export const iframeInsert = function (url) {
     const iframe = document.createElement('iframe');
     iframe.setAttribute('src', `loopsmozat://${url}`);
     iframe.style.height = 0;
@@ -29,7 +29,7 @@ export function iframeInsert(url) {
  * @param iosId [写死为1085411495，除非后续修改了]
  * @param androidId [写死为mozat.rings.loops]
  */
-export function openAppStore() {
+export const openAppStore = function () {
     iframeInsert('util/openAppStore?iosId=1085411495&androidId=mozat.rings.loops');
 }
 
@@ -41,12 +41,7 @@ export function openAppStore() {
  * 注：安卓5.*与IOS8.*都还不支持Object.assign的，因此要进行Polyfill；不过loops应用中是支持的，还好。
  * 注：发现用babel编译，竟然还有一些浏览器不支持Object.assign，唉，老实用Polyfill吧；
  */
-export function di(id, params = {}) {
-    //const point = Object.assign({}, {
-    //    id: id,
-    //    ts: Date.now()
-    //}, params);
-
+export const di = function (id, params) {
     var paramsCopy = params || {}
     // single statistical point in JSON format
     // 由于安卓不支持Object.assign，所以先为Object对象添加该方法（即进行Polyfill）
@@ -71,6 +66,10 @@ export function di(id, params = {}) {
             return target;
         };
     }
+    const point = Object.assign({}, {
+        id: id,
+        ts: Date.now()
+    }, paramsCopy); //我擦，uc里面，竟然是这里出错了。查询了下，安卓竟然没有支持Object.assign
     const url = 'util/statistical?point=' + JSON.stringify(point);
     console.log('埋点链接：'+ url);
     iframeInsert(url);
@@ -82,7 +81,7 @@ export function di(id, params = {}) {
  * @param hostId [type: Number]
  * 调用general/openChannelprofile?uid=uid这个接口
  */
-export function openChannelprofile(hostId) {
+export const openChannelprofile = function (hostId) {
     const url = 'general/openChannelprofile?uid=' + hostId
     console.log('跳转个人主页的链接：' + url);
     iframeInsert(url)
@@ -93,7 +92,7 @@ export function openChannelprofile(hostId) {
  * 做出提示
  * @param text [type: String]
  */
-export function toast(text) {
+export const toast = function (text) {
     const encodeText = encodeURI(text)
     const url = 'util/showShortTip?tipText=' + encodeText;
     iframeInsert(url);
@@ -107,7 +106,7 @@ export function toast(text) {
  * pageName的取值为下面中的某一个：{mydiamond, home(即live tab), mylevel,leaderboard,mytitle,topup,myprofile,upcoming}
  * 使用方式：openAppPage('mytitle', -1)
  */
-export function openAppPage(pageName, unlockType) {
+export const openAppPage = function (pageName, unlockType) {
     const url = 'util/openAppPage?pageName='+ pageName +'&unlockType=' + unlockType;
     iframeInsert(url);
 }
@@ -117,7 +116,7 @@ export function openAppPage(pageName, unlockType) {
  * @param sid [type: String]  [直播间的id，为何是string，不是number？写错了？]
  * @param cid [type: String]  [Tomi说这个是当前用户的userId]
  */
-export function openVideo(sid, cid) {
+export const openVideo = function (sid, cid) {
     const url = 'broadcast/openVideo?cid=' + cid + '&sid=' + sid;
     iframeInsert(url);
 }
@@ -129,7 +128,7 @@ export function openVideo(sid, cid) {
  * 注：可不传页面title，不传title的话，一开始跳转页面的title是undefined；
  * 使用方式：openURL('https://www-test.loopslive.com/web-loops/sign-in/', 'Get Free Coins')
  */
-export function openURL(url, title) {
+export const openURL = function (url, title) {
     const encodeUrl = encodeURI(url)
     const encodeTitle = encodeURI(title)
     const iframeURL = 'util/openUrl?url='+ encodeUrl + '&title=' + encodeTitle;
@@ -139,7 +138,7 @@ export function openURL(url, title) {
 /**
  * 关闭当前的web页面
  */
-export function closeWebviewPage() {
+export const closeWebviewPage = function () {
     iframeInsert('general/closeWindow')
 }
 
@@ -148,7 +147,7 @@ export function closeWebviewPage() {
  * 需要配合openAppPage，去跳转到home界面；
  * 或者配合closeWebviewPage，直接关闭当前web页面，这个感觉比用openAppPage更好。
  */
-export function goLive() {
+export const goLive = function () {
     iframeInsert('broadcast/goLive')
     closeWebviewPage()
 }
@@ -156,7 +155,7 @@ export function goLive() {
 /**
  * 跳转到反馈建议的页面
  */
-export function openFeedbackPage() {
+export const openFeedbackPage = function () {
     iframeInsert('general/feedback')
 }
 
@@ -165,7 +164,7 @@ export function openFeedbackPage() {
  * 关注某个用户
  * @param uid [type: Number] [用户id]
  */
-export function followUser(uid) {
+export const followUser = function (uid) {
     const url = 'account/follow?uid=' + uid
     iframeInsert(url)
 }
@@ -176,7 +175,7 @@ export function followUser(uid) {
  * 注：该接口在预发布环境中测试时，总是没有效果，所以不知道正式环境中有没用；
  * 如果没用，就使用openChannelprofile去打开用户的个人主页
  */
-export function unfollowUser(uid) {
+export const unfollowUser = function (uid) {
     const url = 'account/unfollow?uid=' + uid
     iframeInsert(url)
 }
@@ -187,10 +186,27 @@ export function unfollowUser(uid) {
  * @param hostId [type: Number]
  * 调用broadcast/openReplayList?uid=xxx这个接口
  */
-export function openReplayList(hostId) {
+export const openReplayList = function (hostId) {
     const url = 'broadcast/openReplayList?uid=' + hostId
     console.log('跳转用户的Replay列表界面的链接：' + url);
     iframeInsert(url)
+}
+
+export default {
+    iframeInsert,
+    openAppStore,
+    di,
+    openChannelprofile,
+    toast,
+    openAppPage,
+    openVideo,
+    openURL,
+    closeWebviewPage,
+    goLive,
+    openFeedbackPage,
+    followUser,
+    unfollowUser,
+    openReplayList,
 }
 
 

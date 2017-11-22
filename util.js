@@ -17,7 +17,7 @@
 //    if (r!=null) return r[2];
 //    return null;
 //}
-export function getQueryString(name) {
+function getQueryString(name) {
     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)", "i")
     // 判断window.location.search是否有值，避免url中"?"前面有"#"，导致window.location.search为空字符串
     //var r = window.location.search ? window.location.search.substr(1).match(reg) : window.location.hash.split("?")[1].match(reg)
@@ -48,7 +48,7 @@ export function getQueryString(name) {
  * 注：该方法比getQueryString更强大，可一次获取多个query；而且是使用href获取到整个url，所以更安全。
  * arguments在安卓4.4中还不支持，因此可能有兼容问题
  */
-export function getUrlParams() {
+function getUrlParams() {
     function getByName(name) {
         //const reg = new RegExp(`(^|&|\\?)${name}=([^&]*)(&|$)`, 'i');
         const reg = new RegExp("(^|&|\\?)" + name + "=([^&]*)(&|$)", "i");
