@@ -5,6 +5,7 @@
 PS：
 由于css modules开启后，就基本将local部分的样式都弄失效了，暂时找不到原因与解决方式，因此先放弃该设置；
 =>换成less，用less的嵌套语法代替下局部样式的功能。
+=>为了webstorm开发方便（主要是less注释问题），可先配置好file watchers后自动生成一份css文件，然后引用该css。
 
 注意：在webpack.dev.config.js中，在devServer对象里设置了host属性：
 （1）host: "192.168.50.165", // 修改host配置，让服务器外部可访问（这样手机里就能访问了）
