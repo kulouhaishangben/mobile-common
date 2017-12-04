@@ -40,10 +40,11 @@
     console.log('真实的数值与理想rem数值的比例：',rmd)
     // 如果两者比例有0.2以上的出入，那就重置rem单位
     // 囧，发现有些三星手机中，rmd比例稍微大于0.8，看来要修改差距了，换为1.2与0.85
-    if(rmd > 1.2 || rmd < 0.85){
+    // 囧，发现有谷歌手机中，rmd比例稍微小于1.14，看来要修改差距了，换为1.1与0.85
+    if(rmd > 1.1 || rmd < 0.85){
         console.log('准备重置rem');
-        htmlDom.style.fontSize = (clientWidth / 3.75) / rmd + 'px';
-        console.log('新的rem：',htmlDom.style.fontSize);
+        document.documentElement.style.fontSize = (clientWidth / 3.75) / rmd + 'px';
+        console.log('新的rem：',document.documentElement.style.fontSize);
     }
     document.body.removeChild(div);
 
