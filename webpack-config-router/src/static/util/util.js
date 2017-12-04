@@ -225,6 +225,20 @@ export const autoReload = function (reloadTime, callback) {
     })
 }
 
+
+/**
+ * getDateTime函数可以获取指定时区的某项时间数据；
+ * @param UTCTime [type: number] [从1970至今的毫秒数，可直接Date.now()获取]
+ * @param timeZone  [type: number] [时区；默认为0时区]
+ * @param dateFn  [type: string] [Date对象的某个获取UTC时间的方法，获取当前时区的某项时间数据；默认getUTCFullYear]
+ * @returns {*} [返回对应时间数据]
+ */
+export const getDateTime =  function (UTCTime, timeZone = 0, dateFn = 'getUTCFullYear') {
+    var date = new Date(UTCTime + 3600000 * timeZone) // 获取某个时区的当前时间，之后用这个变量结合UTC的几个方法去获取该时区当前的年月日时分等即可
+    var localDate = date[dateFn]() // 根据世界时，获取到年月日时分等其中一项数据，该数据就是该时区当前的时间数据
+    return localDate
+}
+
 // 放在对象中export，可以直接import Util from './path/util.js'
 export default {
     getQueryString,
@@ -234,4 +248,5 @@ export default {
     myToastFn,
     myToastFn2,
     autoReload,
+    getDateTime,
 }
