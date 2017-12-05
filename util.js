@@ -133,7 +133,7 @@ function append(parent, text) {
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-function myToastFn (parent, text, showTime, hideTime) {
+function myToastFn(text, showTime, hideTime) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
@@ -147,7 +147,8 @@ function myToastFn (parent, text, showTime, hideTime) {
         frag.appendChild(temp.firstChild);
     }
     //parent.appendChild(frag);
-    parent.append(frag);
+    //parent.append(frag);
+    $('body').append(frag);
 
     // 写动画，最后删掉整个元素
     var showTime1 = showTime || 3000
@@ -229,4 +230,30 @@ function autoReload(reloadTime, callback) {
             top: '-900px'
         }, reloadTime, 'linear', callback)
     })
+}
+
+/**
+ * getDateTime函数可以获取指定时区的某项时间数据；
+ * @param UTCTime [type: number] [从1970至今的毫秒数，可直接Date.now()获取] [为了避免获取到的不是同一时间点的情况，因此不在函数中直接获取]
+ * @param timeZone  [type: number] [时区；默认为0时区]
+ * @param dateFn  [type: string] [Date对象的某个获取UTC时间的方法，获取当前时区的某项时间数据；默认getUTCFullYear]
+ * @returns {*} [返回对应时间数据]
+ */
+const getDateTime =  function (UTCTime, timeZone, dateFn) {
+    var timeZoneCopy = timeZone || 0
+    var dateFnCopy = dateFn || 'getUTCFullYear'
+    var date = new Date(UTCTime + 3600000 * timeZoneCopy) // 获取某个时区的当前时间，之后用这个变量结合UTC的几个方法去获取该时区当前的年月日时分等即可
+    //var localDate = date[dateFnCopy]() // 根据世界时，获取到年月日时分等其中一项数据，该数据就是该时区当前的时间数据
+    return date[dateFnCopy]()
+}
+
+const Util = {
+    getQueryString: getQueryString,
+    getUrlParams: getUrlParams,
+    getMobileOperatingSystem: getMobileOperatingSystem,
+    append: append,
+    myToastFn: myToastFn,
+    myToastFn2: myToastFn2,
+    autoReload: autoReload,
+    getDateTime: getDateTime,
 }

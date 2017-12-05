@@ -126,7 +126,7 @@ export const append = function (parent, text) {
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-export const myToastFn = function (parent, text, showTime = 3000, hideTime = 1000) {
+export const myToastFn = function (text, showTime = 3000, hideTime = 1000) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
@@ -144,7 +144,8 @@ export const myToastFn = function (parent, text, showTime = 3000, hideTime = 100
         frag.appendChild(temp.firstChild);
     }
     //parent.appendChild(frag);
-    parent.append(frag);
+    //parent.append(frag);
+    $('body').append(frag);
 
     // 写动画，最后删掉整个元素
     var $myToast = $(`.${timestampClass}`)
@@ -234,8 +235,8 @@ export const autoReload = function (reloadTime, callback) {
  */
 export const getDateTime =  function (UTCTime, timeZone = 0, dateFn = 'getUTCFullYear') {
     var date = new Date(UTCTime + 3600000 * timeZone) // 获取某个时区的当前时间，之后用这个变量结合UTC的几个方法去获取该时区当前的年月日时分等即可
-    var localDate = date[dateFn]() // 根据世界时，获取到年月日时分等其中一项数据，该数据就是该时区当前的时间数据
-    return localDate
+    //var localDate = date[dateFn]() // 根据世界时，获取到年月日时分等其中一项数据，该数据就是该时区当前的时间数据
+    return date[dateFn]()
 }
 
 // 放在对象中export，可以直接import Util from './path/util.js'
