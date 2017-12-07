@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过这个插件，能替换原来的index.html，然后在dist中生成一个新的index.html
 const CleanWebpackPlugin = require('clean-webpack-plugin'); // 清理文件的插件
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 
 
@@ -52,6 +53,18 @@ module.exports = {
         //    $: 'n-zepto',
         //    zepto: 'n-zepto'
         //})
+
+        // copy custom static assets
+        // 现在只用来复制json文件，让ajax可获取json文件
+        new CopyWebpackPlugin([
+            {
+                //from: path.resolve(__dirname, '../static'),
+                from: path.resolve(__dirname, '../test'),
+                //to: 'static',
+                to: 'test',
+                ignore: ['.*']
+            }
+        ])
     ],
     output: {
         //filename: 'bundle.js',

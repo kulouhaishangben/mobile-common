@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过这个插件�
 const CleanWebpackPlugin = require('clean-webpack-plugin'); // 清理文件的插件
 const webpack = require('webpack');
 const config = require('./config.js');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 let entries = {} // 入口对象
 let plugins = [] // 插件数组
@@ -51,7 +52,18 @@ plugins.push(
     }),
     new webpack.optimize.CommonsChunkPlugin({
         name: 'runtime' // 这行是实现不变的js包放在chunk 文件中，且必须在vendor的下面
-    })
+    }),
+    // copy custom static assets
+    // 现在只用来复制json文件，让ajax可获取json文件
+    new CopyWebpackPlugin([
+        {
+            //from: path.resolve(__dirname, '../static'),
+            from: path.resolve(__dirname, '../test'),
+            //to: 'static',
+            to: 'test',
+            ignore: ['.*']
+        }
+    ])
 )
 
 // 可以将公共包分别打包到独立的js文件中吧，但一旦新建一个html文件，这些公共包的代码还是会改变，导致改变hash（如果名称定死，也不行，直接无法运行）

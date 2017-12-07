@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin'); // 通过这个插件�
 const CleanWebpackPlugin = require('clean-webpack-plugin'); // 清理文件的插件
 const webpack = require('webpack');
 var ExtractTextPlugin = require("extract-text-webpack-plugin"); // 独立打包css文件
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 
 
@@ -45,7 +46,19 @@ module.exports = {
             //filename: path.posix.join('css', '[name].[contenthash:7].css'),// 如果打包到css文件夹中，记得在rules设置中修改publicPath，避免图片路径出错
             filename: 'css/[name].[contenthash:7].css', // 如果打包到css文件夹中，记得在rules设置中修改publicPath，避免图片路径出错
             allChunks: true
-        }) // 抽出独立的css文件
+        }), // 抽出独立的css文件
+
+        // copy custom static assets
+        // 现在只用来复制json文件，让ajax可获取json文件
+        new CopyWebpackPlugin([
+            {
+                //from: path.resolve(__dirname, '../static'),
+                from: path.resolve(__dirname, '../test'),
+                //to: 'static',
+                to: 'test',
+                ignore: ['.*']
+            }
+        ])
     ],
     output: {
         //filename: 'bundle.js',
