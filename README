@@ -3,6 +3,7 @@
 （1）在webpack-common文件夹中，有一个用webpack构建的项目，一般需要让项目自动化一些的话，就使用这个webpack-common里面的代码去构建吧。
 
 webpack-common只适合只有一个html文件的小项目；
+用ES6语法写的util方法放在webpack-common的static/util中；
 
 （2）webpack-config-singlePage其实就是webpack-common的配置，但注释更完整一些。
 

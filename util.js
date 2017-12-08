@@ -139,7 +139,6 @@ function myToastFn(text, showTime, hideTime) {
     var timestampClass = 'toast' + new Date().getTime()
     //console.log(timestampClass);
     var myToastHtml = '<div class="my-toast ' + timestampClass + '"><div class="my-toast-text">' + text + '</div></div>'
-    temp.classList.add('my-toast')
     temp.innerHTML = myToastHtml;
     // 防止元素太多 进行提速
     var frag = document.createDocumentFragment();
@@ -233,6 +232,39 @@ function autoReload(reloadTime, callback) {
 }
 
 /**
+ * autoReload2定时刷新功能，可以自定义要刷新整个页面，或者某个部分；
+ * @param reloadTime [type: number] [自动刷新的时间，毫秒数]
+ * @param callback [type: func] [回调函数，自定义刷新的内容]
+ * 注：与autoReload函数的区别是每次都生成一个新的元素，最后删除这个元素；
+ */
+export const autoReload2 = function (reloadTime, callback) {
+    // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
+    var timestampClass = 'reload' + new Date().getTime()
+    //console.log(timestampClass);
+    var $reload = $('<div>Reload...</div>')
+    $reload.addClass(timestampClass)
+    $reload.css({
+        position: 'fixed',
+        top: '-1000px',
+        left: '-500px',
+        color: 'transparent'
+    })
+
+    //parent.append($reload);
+    $('body').append($reload);
+
+    // 写动画，最后删掉整个元素
+    $reload.animate({
+        top: '-900px'
+    }, reloadTime, 'linear', function () {
+        //console.log('准备删除');
+        $reload.remove()
+        callback && callback()
+    })
+}
+
+
+/**
  * getDateTime函数可以获取指定时区的某项时间数据；
  * @param UTCTime [type: number] [从1970至今的毫秒数，可直接Date.now()获取] [为了避免获取到的不是同一时间点的情况，因此不在函数中直接获取]
  * @param timeZone  [type: number] [时区；默认为0时区]
@@ -255,5 +287,6 @@ const Util = {
     myToastFn: myToastFn,
     myToastFn2: myToastFn2,
     autoReload: autoReload,
+    autoReload2: autoReload2,
     getDateTime: getDateTime,
 }
