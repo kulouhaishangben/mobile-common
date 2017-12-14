@@ -131,9 +131,10 @@ function append(parent, text) {
  * @param text [type: string] [必要，toast的文案，必须为字符串，最好不要带dom元素]
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
+ * @param styleObj [type: object] [可选，自定义toast的样式；若不想自定义，可传空对象{}]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-function myToastFn(text, showTime, hideTime) {
+function myToastFn(text, styleObj, showTime, hideTime) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
@@ -153,6 +154,8 @@ function myToastFn(text, showTime, hideTime) {
     var showTime1 = showTime || 3000
     var hideTime1 = hideTime || 1000
     var $myToast = $('.' + timestampClass)
+    // 自定义样式
+    $myToast.css(styleObj)
     //console.log('$myToast：',$myToast) // 有个问题，就是一旦产生多个.my-toast，下面代码就会对这些.my-toast都进行处理
     $myToast.show() // 先立即显示，再用fadeIn延迟显示的时间
     $myToast.fadeIn(showTime1, function () {
@@ -170,10 +173,11 @@ function myToastFn(text, showTime, hideTime) {
  * @param canToast [type: object] [必要，标记变量，限制toast盒子的多次显示]
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
+ * @param styleObj [type: object] [可选，自定义toast的样式；在自配的路由项目中zIndex总为1，因此可传这个参数去修改；如果不想自定义，可传空对象{}]
  * 注：为了起到限制作用，canToast必须为对象，且格式为canToast = { value: true }
  * 注：该方法就只操作一个toast，因此需要一个标记变量来限制。
  */
-function myToastFn2 (myToast, canToast, showTime, hideTime) {
+function myToastFn2 (myToast, canToast, styleObj, showTime, hideTime) {
     //if (!canToast) { // 这种在引入该方法时会报错，因为一开始还无法找到canToast这个变量
     if (!canToast.value) {
         console.log('不可点击');
@@ -183,6 +187,7 @@ function myToastFn2 (myToast, canToast, showTime, hideTime) {
     canToast.value = false // 变为不可点击状态
     var showTime1 = showTime || 3000
     var hideTime1 = hideTime || 1000
+    myToast.css(styleObj) // 自定义样式
     myToast.show() // 先立即显示，再用fadeIn延迟显示的时间
     myToast.fadeIn(showTime1, function () {
         myToast.fadeOut(hideTime1, function () { // fadeOut必须配合fadeIn（不知道jq会不会更方便些）

@@ -76,11 +76,12 @@ module.exports = {
         //publicPath: "/",
     },
     //resolve: {
-    //    alias: {// 给文件或文件夹起别名，直接写路径会报错，所以要借助path.resolve
+    //    alias: {// 直接写路径会报错，所以要借助path.resolve
     //        //jq: "jquery", // 报错
     //        jq: path.resolve(__dirname, './node_modules/jquery/dist/jquery.js'),
     //        //static: './src/static/images', // 这样写会报错的！所以要使用path.resolve
-    //        static: path.resolve(__dirname, './src/static/images'),
+    //        //static: path.resolve(__dirname, './src/static/images'), // 直接./src可能出错，有时要修改为../src
+    //        "@static": path.resolve(__dirname, '../src/static'), // key的名称前加@符号，明显表示alias
     //
     //    }
     //},

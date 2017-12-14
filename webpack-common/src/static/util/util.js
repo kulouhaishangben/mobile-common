@@ -124,21 +124,21 @@ export const append = function (parent, text) {
  * @param text [type: string] [必要，toast的文案，必须为字符串，最好不要带dom元素]
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
- * @param styleObj [type: object] [可选，自定义toast的样式]
+ * @param styleObj [type: object] [可选，自定义toast的样式；若不想自定义，可传空对象{}]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-export const myToastFn = function (text, showTime = 3000, hideTime = 1000, styleObj = {color: '#000'}) {
+export const myToastFn = function (text, styleObj = {color: '#000'}, showTime = 3000, hideTime = 1000) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
     //console.log(timestampClass);
-
-    //temp.classList.add('my-toast')
-    temp.innerHTML = `<div class="my-toast ${timestampClass}">
+    var myToastHtml = `<div class="my-toast ${timestampClass}">
     <div class="my-toast-text">
         ${text}
     </div>
-</div>`;
+</div>`
+    //temp.classList.add('my-toast')
+    temp.innerHTML = myToastHtml;
     // 防止元素太多 进行提速
     var frag = document.createDocumentFragment();
     while (temp.firstChild) {
@@ -169,10 +169,11 @@ export const myToastFn = function (text, showTime = 3000, hideTime = 1000, style
  * @param canToast [type: object] [必要，标记变量，限制toast盒子的多次显示]
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
+ * @param styleObj [type: object] [可选，自定义toast的样式；在自配的路由项目中zIndex总为1，因此可传这个参数去修改；如果不想自定义，可传空对象{}]
  * 注：为了起到限制作用，canToast必须为对象，且格式为canToast = { value: true }
  * 注：该方法就只操作一个toast，因此需要一个标记变量来限制。
  */
-export const myToastFn2 = function (myToast, canToast, showTime = 3000, hideTime = 1000) {
+export const myToastFn2 = function (myToast, canToast, styleObj = {color: '#000'}, showTime = 3000, hideTime = 1000) {
     //if (!canToast) { // 这种在引入该方法时会报错，因为一开始还无法找到canToast这个变量
     if (!canToast.value) {
         console.log('不可点击');
@@ -180,6 +181,7 @@ export const myToastFn2 = function (myToast, canToast, showTime = 3000, hideTime
     }
     //canToast = false
     canToast.value = false // 变为不可点击状态
+    myToast.css(styleObj) // 自定义样式
     //var showTime1 = showTime || 3000
     myToast.show() // 先立即显示，再用fadeIn延迟显示的时间
     myToast.fadeIn(showTime, function () {
