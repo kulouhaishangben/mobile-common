@@ -134,7 +134,7 @@ function append(parent, text) {
  * @param styleObj [type: object] [可选，自定义toast的样式；若不想自定义，可传空对象{}]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-function myToastFn(text, styleObj, showTime, hideTime) {
+function myToastFn(text, styleObj, styleObj2, showTime, hideTime) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
@@ -154,8 +154,10 @@ function myToastFn(text, styleObj, showTime, hideTime) {
     var showTime1 = showTime || 3000
     var hideTime1 = hideTime || 1000
     var $myToast = $('.' + timestampClass)
+    var $myToastText = $myToast.find('.my-toast-text')
     // 自定义样式
     $myToast.css(styleObj)
+    $myToastText.css(styleObj2)
     //console.log('$myToast：',$myToast) // 有个问题，就是一旦产生多个.my-toast，下面代码就会对这些.my-toast都进行处理
     $myToast.show() // 先立即显示，再用fadeIn延迟显示的时间
     $myToast.fadeIn(showTime1, function () {

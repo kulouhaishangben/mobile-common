@@ -125,9 +125,10 @@ export const append = function (parent, text) {
  * @param showTime [type: number] [可选，要显示的时间，毫秒数]
  * @param hideTime [type: number] [可选，要淡出隐藏的时间，毫秒数]
  * @param styleObj [type: object] [可选，自定义toast的样式；若不想自定义，可传空对象{}]
+ * @param styleObj2 [type: object] [可选，自定义.my-toast-text的样式；若不想自定义，可传空对象{}]
  * 注：需要配合css样式，可引入my-toast.css文件
  */
-export const myToastFn = function (text, styleObj = {color: '#000'}, showTime = 3000, hideTime = 1000) {
+export const myToastFn = function (text, styleObj = {color: '#000'}, styleObj2 = {display: 'flex'}, showTime = 3000, hideTime = 1000) {
     var temp = document.createElement('div');
     // 处理后续使用$('.my-toast')会获取到多个元素的问题，添加一个带时间戳的类名
     var timestampClass = 'toast' + new Date().getTime()
@@ -150,8 +151,10 @@ export const myToastFn = function (text, styleObj = {color: '#000'}, showTime = 
 
     // 写动画，最后删掉整个元素
     var $myToast = $(`.${timestampClass}`)
+    var $myToastText = $myToast.find('.my-toast-text')
     // 自定义样式
     $myToast.css(styleObj)
+    $myToastText.css(styleObj2)
     //console.log('$myToast：',$myToast) // 有个问题，就是一旦产生多个.my-toast，下面代码就会对这些.my-toast都进行处理，因此要使用时间戳区别它们
     $myToast.show() // 先立即显示，再用fadeIn延迟显示的时间
     $myToast.fadeIn(showTime, function () {
