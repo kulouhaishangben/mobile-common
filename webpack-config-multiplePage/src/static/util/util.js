@@ -52,6 +52,12 @@ export const getUrlParams = function () {
         const reg = new RegExp(`(^|&|\\?)${name}=([^&]*)(&|$)`, 'i');
         const param = window.location.href.substring(1).match(reg);
         if (param !== null) {
+            if (param[2].indexOf('#') !== -1) {
+                // reg2是为了处理类似index.html?companyId=aohy#/business这种url的情况而添加的，是为了去除#符号
+                const reg2 = /([^&]*)#/;
+                const param2 = param[2].match(reg2)
+                return param2[1]
+            }
             return param[2];
         }
         return undefined;
