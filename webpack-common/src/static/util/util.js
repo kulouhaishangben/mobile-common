@@ -438,23 +438,40 @@ export const photoCompress = function (file, w, callback){
 /**
  * canvasDataURL会去压缩图片
  * @param path [type: string] [是一个base64的字符串，这里一般会由photoCompress函数传入]
- * @param obj [type: object] [比如传入{quality:0.7}，设置压缩后的质量]
+ * @param obj [type: object] [比如传入{quality:0.7, minSize: 1000, minQuality: 0.1}，分别设置压缩后的质量、图片大小的最小值、图片质量的最小值]
  * @param callback  [type: fn] [回调函数，比如调用上传接口]
  * @param errorCallback  [type: fn] [回调函数，因图片太大而获取图片失败的情况]
+ * 注：现在最小限制以minQuality为准，minSize只是辅助，如果需求修改为必须小于限制值minSize，就在第二个判断里调用errorCallback；
+ * 注：如果直接使用base64格式上传，content-length会比使用File对象格式上传大一些；
  */
 const canvasDataURL = function (path, obj, callback, errorCallback){
     console.log('开始压缩');
     let img = new Image();
+    let minSize = obj.minSize // 图片大小限制，不传就没限制
+    let minQuality = obj.minQuality || 0.1 // 限制最小的图片质量quality
+    console.log('minQuality',minQuality);
+    console.log('minSize',minSize);
     img.src = path;
     img.onload = function(){
-        let that = this;
+        if (obj.quality < minQuality) {
+            // todo:quality小于minQuality了，证明图片太大，可以在这里告知用户图片太大了！
+            // 由于下面代码有判断了，这里不会被执行的
+            errorCallback && errorCallback()
+            return
+        }
+        let quality = 0.7  // 默认图片质量为0.7，而且必须大于0，否则强制为默认值
+        // 图像质量：quality值越小，所绘制出的图像越模糊，小于0.3的话，可能就开始失真严重了
+        if(obj.quality && obj.quality <= 1 && obj.quality > 0){
+            quality = obj.quality
+        }
+        console.log('quality:', quality);
+        let that = this
         // 默认按比例压缩
         let w = that.width,
             h = that.height,
             scale = w / h;
         w = obj.width || w;
         h = obj.height || (w / scale);
-        let quality = 0.7;  // 默认图片质量为0.7
         //生成canvas
         let canvas = document.createElement('canvas');
         let ctx = canvas.getContext('2d');
@@ -466,32 +483,32 @@ const canvasDataURL = function (path, obj, callback, errorCallback){
         canvas.setAttributeNode(anw);
         canvas.setAttributeNode(anh);
         ctx.drawImage(that, 0, 0, w, h);
-        // 图像质量：quality值越小，所绘制出的图像越模糊，小于0.3的话，可能就开始失真严重了
-        if(obj.quality && obj.quality <= 1 && obj.quality > 0){
-            quality = obj.quality;
-        }
-        console.log('quality:', quality);
+
         let base64 = canvas.toDataURL('image/jpeg', quality)
         // 回调函数返回base64的值
         callback(base64);
 
-        // // 判断压缩后的图片是否超过1M：由于后台现在能控制限制为10M，所以就不用大于1M再次压缩了，超过10M再压吧？
-        // let size = convertBase64UrlToBlob(base64).size
-        // console.log('size',size);
-        // if (size/1024 > 1024 && quality >= 0.3) {
-        //   // 如果压缩后还是大于1M，那就再压缩：发现不能使用之前压缩后获得的base64去压缩，没效果，所以要重新传入quality
-        //   let newQua = (quality * 10 - 2) / 10 // js还是不要使用浮点数计算了
-        //   canvasDataURL(path, {
-        //     quality: newQua
-        //   }, callback)
-        // } else if (size/1024 > 1024) {
-        //   // todo:quality小于0.3了，证明图片太大，可以在这里告知用户图片太大了！
-        //   // alert('获取失败，图片太大了！')
-        //   errorCallback && errorCallback()
-        // } else {
-        //   // 回调函数返回base64的值
-        //   callback(base64);
-        // }
+        // 判断压缩后的图片是否超过限制值minSize，但quality不要小于minQuality，不然失真非常严重
+        let size = convertBase64UrlToBlob(base64).size
+        console.log('size',size/1024);
+        if (size/1024 > minSize && quality > minQuality) {
+            // 如果压缩后还是大于限制值minSize，且quality还大于minQuality，那就再压缩：发现不能使用之前压缩后获得的base64去压缩，没效果，所以要重新传入quality
+            let newQuality = (quality * 10 - 2) / 10 // js还是不要使用浮点数计算了
+            canvasDataURL(path, {
+                quality: newQuality,
+                minSize: minSize,
+                minQuality: minQuality,
+            }, callback)
+        } else if (size/1024 > minSize && quality === minQuality) {
+            // 如果压缩后还是大于限制值minSize，但quality刚好等于minQuality，那就返回压缩后的base64吧
+            // 但需求如果修改为必须小于限制值minSize，那这里就告知用户，调用errorCallback
+            // errorCallback && errorCallback()
+            callback(base64)
+        } else {
+            // 到这一步，证明图片大小不超过限制值minSize
+            // 回调函数返回base64的值
+            callback(base64)
+        }
     }
 }
 
