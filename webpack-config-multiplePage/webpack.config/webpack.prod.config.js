@@ -2,7 +2,7 @@
  * 这里是生产环境的配置
  * @type {merge|exports|module.exports}
  */
-//const path = require('path'); // 即使common里面有引入path了，但在这里还是必须引入，不然就报错!
+const path = require('path'); // 即使common里面有引入path了，但在这里还是必须引入，不然就报错!
 const webpack = require('webpack'); // 即使common里面有引入webpack了，但在这里还是必须引入，不然就报错！
 const CleanWebpackPlugin = require('clean-webpack-plugin'); // 清理文件的插件
 const merge = require('webpack-merge');

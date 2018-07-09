@@ -58,7 +58,7 @@ plugins.push(
     new CopyWebpackPlugin([
         {
             //from: path.resolve(__dirname, '../static'),
-            from: path.resolve(__dirname, '../test'),
+            from: path.resolve(__dirname, '../test'), // 记得在与src同一级目录下创建一个test文件夹，不然会报错；
             //to: 'static',
             to: 'test',
             ignore: ['.*']
