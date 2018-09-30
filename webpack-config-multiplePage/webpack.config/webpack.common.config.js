@@ -111,7 +111,8 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/, // 以 .css 结尾的全部文件，都将被提供给 style-loader 和 css-loader。
+                // test: /\.css$/, // 以 .css 结尾的全部文件，都将被提供给 style-loader 和 css-loader。
+                test: /\.(less|css)$/,
                 use: [
                     {
                         loader: 'style-loader',
@@ -123,8 +124,12 @@ module.exports = {
                         loader: 'css-loader',
                         options: {
                             //minimize: true, // 压缩css代码
+                            modules: true,
+                            localIdentName: '[name]__[local]--[hash:base64:5]',
+                            importLoaders: 1, // 如果不加入这行，css-loader后面的loader无法使用？
                         }
-                    }
+                    },
+                    'less-loader',
                 ]
             },
             //{

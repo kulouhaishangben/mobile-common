@@ -70,6 +70,7 @@ module.exports = {
         //filename: 'bundle.js',
         //filename: '[name].[chunkhash].js', // [name]就是指代entry对象里面的key；[chunkhash]可以写一个hash，而且只有在js文件被修改时，才会改变hash，客户端才会重新请求，而不是使用缓存
         //filename: path.posix.join('static', 'js/[name].[chunkhash].js'), // 这样写，可以将js文件都放在dist/static/js文件夹里面
+        // 注意：如果是多页面应用，必须使用chunkhash而不是hash，因为用hash会导致所有js文件名的hash相同，缓存机制被破坏；
         filename:  'js/[name].[chunkhash].js', // 这样写，也可以将js文件都放在dist/js文件夹里面
         //path: path.resolve(__dirname, 'dist'),
         path: path.resolve(__dirname, '../dist'), // 打包到项目根目录的dist中

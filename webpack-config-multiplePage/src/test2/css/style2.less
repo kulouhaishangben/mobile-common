@@ -1,0 +1,22 @@
+.test-less {
+  background-color: red;
+  .less-box {
+    background-color: green;
+  }
+  /* 定义全局样式 */
+  :global(.less-box) {
+    background-color: blue;
+  }
+
+  /* 定义多个全局样式 */
+  :global {
+    .link {
+      color: green;
+    }
+    .box {
+      color: yellow;
+    }
+  }
+}
+
+
