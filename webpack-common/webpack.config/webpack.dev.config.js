@@ -8,6 +8,9 @@ const common = require('./webpack.common.config.js');
 
 
 module.exports = merge(common, {
+    // entry: {
+    //     index: './src/index.js' // merge插件合并时，会将index入口覆盖，但保留vendor入口
+    // },
     devtool: 'inline-source-map',
     devServer: { // 开发环境时查看代码的工具，也就不用每次都生成dist文件夹了；
         contentBase: path.join(__dirname, "dist"),
