@@ -9,7 +9,7 @@
  * USAGE:
  * let paramName = getQueryString('paramName');
  *
- * @returns string
+ * @returns string|null
  */
 //export function getQueryString(name) {
 //    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
@@ -284,6 +284,110 @@ const getDateTime =  function (UTCTime, timeZone, dateFn) {
     var date = new Date(UTCTime + 3600000 * timeZoneCopy) // 获取某个时区的当前时间，之后用这个变量结合UTC的几个方法去获取该时区当前的年月日时分等即可
     //var localDate = date[dateFnCopy]() // 根据世界时，获取到年月日时分等其中一项数据，该数据就是该时区当前的时间数据
     return date[dateFnCopy]()
+}
+
+/**
+ * getCurrDateOfTimeZone：获取某个时区的当前时间：以【用户系统时间为基准】，计算出相对于【用户系统时间】的【另一个时区目前的时间】；
+ * ->缺点：会受到【用户系统时间】的影响，从而可能导致活动时间计算不准确！
+ * ->不要用该函数获取服务器时间，无法准确获取服务器时间，因为用户系统时间如果乱修改，就会干扰到；
+ * ->如果要获取服务器时间，请用xhr的方式获取响应头的Date属性；再通过getConventionalDate进行转换；
+ * @param localDate [type: Date对象] [比如new Date()，或new Date(服务器时间)]
+ * @param offset [type: number] [默认0时区，东时区是负数，西时区是正数，比如东八区是-8，这是因为getTimezoneOffset获取的偏移值是东区为负数，西区为正数，因此东八区是-8]
+ * @returns {Date}
+ */
+function getCurrDateOfTimeZone(localDate, offset) {
+    // 利用Date对象得到本地时间
+    localDate = localDate || new Date();
+    // 由于getTimezoneOffset获取的偏移值是东区为负数，西区为正数，因此东八区是-8
+    offset = offset || 0; // 默认0时区
+    // if (offset === 0) {
+    //     offset = 0; // 0时区
+    // } else {
+    //     offset = offset || -8; // 默认是东八区
+    // }
+
+    let localTime = localDate.getTime(); //通过调用Data()对象的getTime()方法，即可显示1970年1月1日后到此时时间之间的毫秒数。
+    // 接下来，通过Data()对象的getTimezoneOffset()方法来找出当地时间偏移值。
+    // 在缺省情况下，此方法以分钟显示时区偏移值结果，因此在早先的计算中要将此值转换成毫秒。
+    let localOffset = localDate.getTimezoneOffset() * 60000; // 转为毫秒数
+    // console.log('localDate.getTimezoneOffset()',localDate.getTimezoneOffset());
+    // 然后将当前时间与时区偏移量相加，得到国际标准时间（用毫秒表示的，因为后面还需要计算，所以这里不做转换），
+    // 然后与你想要知道的时区的偏移量再进行相加，得到那个时区的时间，然后再利用Date对象将其转换为时间字符串。
+    let utcTime = localTime + localOffset; //得到国际标准时间
+    // console.log('utcTime',utcTime);
+    let calcTime = utcTime + (3600000 * (0 - offset)); // 得到【所需时区】的毫秒数
+    return new Date(calcTime);
+    // let nd = new Date(calcTime);
+    // document.write('指定时区时间是：' + nd.toLocalString());
+}
+
+/**
+ * getConventionalDate：计算出活动的约定日期，不受【用户系统时间/时区】的影响；
+ * ->比如getConventionalDate(new Date('2019/11/23 00:00:00'), -8)，
+ * ->代表活动约定以东八区时间为准，该函数就计算出以东八区时间为准的'2019/11/23 00:00:00'；
+ * ->再比如getConventionalDate(new Date(xhr获取的服务器时间), 活动约定的时区)，这样就能获取当前准确的服务器时间，然后可以跟其他约定日期进行比较；
+ * @param conventionalDate [type: Date对象] [比如new Date('2019/11/23 00:00:00')]
+ * @param offset [type: number] [默认东八区，东时区是负数，西时区是正数，比如东八区是-8，这是因为getTimezoneOffset获取的偏移值是东区为负数，西区为正数，因此东八区是-8]
+ * @returns {Date}
+ */
+function getConventionalDate(conventionalDate, offset) {
+    // 由于getTimezoneOffset获取的偏移值是东区为负数，西区为正数，因此东八区是-8
+    if (offset === 0) {
+        offset = 0; // 0时区
+    } else {
+        offset = offset || -8; // 默认是东八区
+    }
+
+    let localTime = conventionalDate.getTime(); //通过调用Data()对象的getTime()方法，即可显示1970年1月1日后到此时时间之间的毫秒数。
+    // 接下来，通过Data()对象的getTimezoneOffset()方法来找出当地时间偏移值。
+    // 在缺省情况下，此方法以分钟显示时区偏移值结果，因此在早先的计算中要将此值转换成毫秒。
+    let localOffset = conventionalDate.getTimezoneOffset();
+    // console.log('conventionalDate.getTimezoneOffset()',conventionalDate.getTimezoneOffset());
+    // 计算约定时区与本地时区的时差
+    let calcOffsetTime = (offset * 60 - localOffset) * 60000;
+    // 然后本地时间+时差，就是【所需时区】的毫秒数
+    let calcTime = localTime + calcOffsetTime; //得到【所需时区】的毫秒数
+    // console.log('calcTime',calcTime);
+    return new Date(calcTime);
+}
+
+// getServeDate：通过xhr获取服务器时间：用这种方式确实能获取到服务器时间的，但需要通过getConventionalDate转换，否则会受到【用户系统时区】的影响；
+//->但其实更好是让后台返回服务器的当前【时间戳】，就不怕new Date()转换时受到【用户系统时区】的影响！
+function getServeDate(opts={}) {
+    // 用axios的方式获取，也可通过jquery的$.ajax进行获取，原理一样的；
+    axios({
+        // url: 'https://test-bbc-other.iauto360.cn/frontpage/Double12/vueAct/rotaryTable.html',
+        url: window.location.href,
+    }).then((res) => {
+        let dateStr = res.request.getResponseHeader('Date') // 当前服务器时间
+        let date = new Date(res.request.getResponseHeader('Date'))
+        // let date = new Date('Thu, 21 Nov 2019 08:06:25 GMT')
+        // let date = new Date('2019/11/23 00:00:00')
+        // 根据该服务器时间，获取活动约定时区(opts.offset)当前的时间，比如东八区-8，
+        // 然后就能跟其他用getConventionalDate转换的活动约定日期进行比较了！
+        let offset = -8;
+        if (opts.offset === 0) {
+            offset = 0
+        } else {
+            offset = opts.offset || -8;
+        }
+        let currActDate = getConventionalDate(date, offset)
+        console.log('服务器时间', dateStr);
+        console.log('服务器时间-日',date.getDate());
+        console.log('服务器时间-时',date.getHours());
+        console.log('服务器时间-分',date.getMinutes());
+        console.log('服务器时间-秒',date.getSeconds());
+        console.log('服务器时间-毫秒数',date.getTime());
+        console.log('活动约定时区此时的时间-毫秒数',currActDate.getTime());
+        console.log('活动约定时区此时的时间-日',currActDate.getDate());
+        console.log('活动约定时区此时的时间-时',currActDate.getHours());
+
+        opts.success && opts.success(currActDate);
+
+    }).catch((err) => {
+        console.log('服务器时间-进入catch',err);
+        opts.error && opts.error(err);
+    });
 }
 
 const Util = {
