@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "swiper": "3.4.2"
+    "swiper": "6.5.1"
   },
   "browserslist": [
     "> 1%",
